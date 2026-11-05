@@ -69,6 +69,12 @@ builder.Services.AddScoped<IOrganisationService>(provider=>
 );
 builder.Services.AddScoped<IProjectService,ProjectService>();
 builder.Services.AddScoped<ITaskService,TaskService>();
+builder.Services.AddScoped<ITaskService>(provider =>
+{
+    var inner=provider.GetRequiredService<TaskService>();
+    var cache=provider.GetRequiredService<ICacheService>();
+    return new CachedTaskService(inner,cache);
+});
 
 var app = builder.Build();
 app.UseMiddleware<ExceptionHandlingMiddleware>();
